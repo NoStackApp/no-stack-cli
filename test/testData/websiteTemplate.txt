@@ -1,0 +1,15 @@
+### USER CLASS ###
+newUserClass user
+
+### SOURCES ###
+newSource  registration user
+
+### TYPES ###
+newType stackName registration user
+newType licenseId registration stackName
+newType organization registration licenseId
+
+### SELECTIONS ###
+newSelection registration stackName
+newSelection registration organization
+newSelection registration licenseId

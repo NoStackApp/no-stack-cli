@@ -1,0 +1,15 @@
+### USER CLASS ###
+newUserClass user
+
+### SOURCES ###
+newSource registration user
+
+### TYPES ###
+newType licenseId registration stackName
+newType organization registration licenseId
+newType maxSize registration licenseId string singleRequired
+
+### SELECTIONS ###
+newSelection registration stackName
+newSelection registration organization
+newSelection registration licenseId

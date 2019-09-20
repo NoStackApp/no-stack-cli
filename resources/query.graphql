@@ -1,0 +1,326 @@
+query collectionQuery($collectionId: ID!, $parameters: String!, $unrestricted: Boolean!) { collectionData(collectionId: $collectionId, parameters: $parameters, unrestricted: $unrestricted) }
+
+query sourceData($sourceId: ID!, $typeRelationships:String!, $parameters: String!, $unrestricted: Boolean!) { sourceData(sourceId: $sourceId, typeRelationships:$typeRelationships, parameters: $parameters, unrestricted: $unrestricted){
+  id,
+  type,
+  instance {
+    id,
+    value,
+    order
+  },
+  children {
+    id,
+    type,
+    instance {
+      id,
+      value,
+      order
+    },
+    children {
+      id,
+      type,
+      instance {
+        id,
+        value,
+        order
+      },
+    },
+  }
+}}
+
+query unitData($unitId: ID!, $typeRelationships:String!, $parameters: String!, $unrestricted: Boolean!) { unitData(unitId: $unitId, typeRelationships:$typeRelationships, parameters: $parameters, unrestricted: $unrestricted){
+  id,
+  type,
+  instance {
+    id,
+    value,
+    order
+  },
+  children {
+    id,
+    type,
+    instances {
+      id,
+      type,
+      instance {
+        id,
+        value,
+        order
+      },
+      children {
+        id,
+        type,
+        instances {
+          id,
+          type,
+          instance {
+            id,
+            value,
+            order
+          },
+        }
+      }
+    }
+  }
+}}
+
+
+
+mutation addSelection($sourceId:ID!,$typeId:ID!){
+  AddSourceTypes(sourceid: $sourceId, typeid: $typeId) {
+    id
+    types {
+      id
+      name
+    }
+  }
+}
+
+
+mutation addSource($id: ID!, $name: String!, $collectionId: ID!) {
+  CreateSource(id: $id, name: $name) {
+    id,
+    name
+  }
+
+  AddSourceCollection(sourceid: $id, collectionid: $collectionId) {
+    id
+  }
+}
+
+
+#mutation EXECUTE_ACTION_GONE {  ExecuteAction(actionId: $actionId, executionParameters: $executionParameters)}
+
+mutation executeAction($actionId: ID!, $executionParameters: String,  $file:Upload, $unrestricted: Boolean) {  ExecuteAction(actionId: $actionId, executionParameters: $executionParameters, file: $file, unrestricted: $unrestricted)}
+
+mutation createAction($actionName: String, $userClassId: ID!, $actionType: ActionType, $actionParameters: String) { CreateAction(name: $actionName,   userClassId: $userClassId,   actionType: $actionType,   actionParameters: $actionParameters ) {id, name, actionType}}
+
+mutation createModerator($name: String, $password: String, $email: String) { CreateModerator(name: $name, password: $password, email: $email) {id, noStackId, name, }}
+mutation createPlatform($owner: ID!, $ownerPlatformPassword: String, $name: String) { CreatePlatform(owner: $owner, ownerPlatformPassword: $ownerPlatformPassword, name: $name) {id, name, clientId, moderators{id}}}
+
+query STACK_QUERY($id: ID!) { Platform(id: $id) { id name classes {id name}}}
+
+mutation associateInstances(
+$firstInstanceId: ID!
+$secondInstanceId: ID!
+$instanceAssnId: ID!
+$typeAssnId: ID!
+) {
+  CreateInstanceAssn(id: $instanceAssnId) {
+    id
+  }
+
+  addAssnToFirstInstance: AddInstanceInstanceAssns(
+    instanceid: $firstInstanceId
+    instanceassnid:$instanceAssnId) {
+    id
+  }
+
+  addAssnToSecondInstance: AddInstanceInstanceAssns(
+    instanceid: $secondInstanceId
+    instanceassnid: $instanceAssnId) {
+    id
+  }
+
+  AddInstanceAssnAssn(instanceassnid: $instanceAssnId,  assnid: $typeAssnId) {
+    id
+  }
+}
+
+
+mutation createInstanceMutation(
+  $id: ID!
+  $value: String
+  $typeId: ID!
+  $order: Float
+  $parentId: ID!
+  $parentTypeId: ID!
+  $treeId: ID!
+  $childExists: Boolean
+  $ownerless: Boolean
+) {
+  AddInstance(
+    typeId: $typeId
+    instanceID: $id
+    value: $value
+    order: $order
+    parentTypeId: $parentTypeId
+    parentInstanceId: $parentId
+    treeId: $treeId
+    childExists: $childExists
+    ownerless: $ownerless
+  ) {
+    id
+    value
+    __typename
+  }
+}
+
+mutation addType(
+$typeId: ID!
+$typeName: String
+$parentId: ID!
+$assnId: ID!
+$assnName: String
+$treeId: ID!
+) {
+  AddType(
+    typeId: $typeId
+    typeName: $typeName
+    parentId: $parentId
+    assnId: $assnId
+    assnName: $assnName
+    treeId: $treeId
+  ) {
+    id,
+    name,
+    platform {
+      id
+    }
+    assns {
+      id,
+      name
+    }
+  }
+}
+
+
+
+mutation addInstance(
+$id: ID!
+$value: String
+$typeId: ID!
+$order: Float
+$parentId: ID!
+$parentTypeId: ID!
+$treeId: ID!
+$childExists: Boolean
+$ownerless: Boolean
+) {
+  AddInstance(
+    typeId: $typeId
+    instanceID: $id
+    value: $value
+    order: $order
+    parentTypeId: $parentTypeId
+    parentInstanceId: $parentId
+    treeId: $treeId
+    childExists: $childExists
+    ownerless: $ownerless
+  ) {
+    id
+    value
+    __typename
+  }
+}
+
+
+mutation addUserClass($id: ID!, $name: String!, $platformId: ID!) {
+  CreateUserClass(id: $id, name: $name, platformId: $platformId) {
+    id
+    name
+    platform {
+      id
+    }
+  }
+}
+
+
+mutation addCollection(
+$collectionId: ID!
+$collectionName: String
+$userClassId: ID!
+$restricted: Boolean
+) {
+  AddCollection(
+    collectionId: $collectionId
+    collectionName: $collectionName
+    restricted: $restricted
+  ) {
+    id
+    name
+    restricted
+  }
+
+  AddUserClassCollection(
+    collectionid: $collectionId
+    userclassid: $userClassId
+  ) {
+    id
+    collection {
+      id
+      name
+    }
+  }
+}
+
+
+mutation addTreeRoot($treeId: ID!, $typeId: ID) {
+  AddTreeRoot(treeid: $treeId, typeid: $typeId) {
+    id
+    root {
+      id
+      name
+    }
+    nodes {
+      id
+      name
+    }
+  }
+}
+
+mutation createTree($id: ID!, $name: String!, $sourceId: ID!) {
+  CreateTree(id: $id, name: $name) {
+    id
+    name
+  }
+
+  AddSourceTree(treeid: $id, sourceid: $sourceId) {
+    id
+    tree {
+      id
+    }
+  }
+}
+
+mutation createConstraint(
+$id: ID!
+$value: String!
+$constraintType: ConstraintType!
+$typeId: ID!
+$sourceId: ID!
+) {
+  CreateConstraint(id: $id, value: $value, constrainttype: $constraintType) {
+    id
+  }
+
+  AddConstraintType(constraintid: $id, typeid: $typeId) {
+    id
+  }
+
+  AddConstraintSource(constraintid: $id, sourceid: $sourceId) {
+    id
+  }
+}
+
+
+mutation addUser(
+$email: String
+$userClass: ID
+$password: String
+$name: String
+$firstName: String
+$lastName: String
+) {
+  CreateUserOnPlatform(
+    email: $email
+    userClass: $userClass
+    password: $password
+    name: $name
+    firstName: $firstName
+    lastName: $lastName
+  ) {
+    id
+  }
+}
+
